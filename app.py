@@ -9,7 +9,12 @@ from auth import auth_bp
 from groq_ai.analysis import get_breath_analysis_explanation
 from utils.heatmap import generate_saliency_heatmap
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+app = Flask(
+    __name__,
+    static_folder=os.path.join(BASE_DIR, 'static'),
+    template_folder=os.path.join(BASE_DIR, 'templates')
+)
 app.config.from_object(Config)
 
 # Ensure database and upload folders exist
