@@ -7,7 +7,5 @@ __pycache__/
 env/
 venv/
 database/*.db
-static/uploads/*
-!static/uploads/.gitkeep
 savemodels/*.pth
 savemodels/*.h5

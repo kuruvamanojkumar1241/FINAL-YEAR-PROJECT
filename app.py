@@ -62,6 +62,10 @@ def view_dataset():
     view_all = request.args.get('view_all')
     categories = ['Bengin', 'Malignant', 'Normal']
     dataset_path = Config.DATASET_PATH
+    if not os.path.exists(dataset_path) or not os.path.exists(os.path.join(dataset_path, 'Bengin cases')):
+        sample_path = os.path.join(BASE_DIR, 'dataset_sample')
+        if os.path.exists(sample_path):
+            dataset_path = sample_path
     
     data = {}
     for cat in categories:
@@ -82,7 +86,12 @@ def view_dataset():
 
 @app.route('/dataset/<path:filename>')
 def serve_dataset(filename):
-    return send_from_directory(Config.DATASET_PATH, filename)
+    dataset_path = Config.DATASET_PATH
+    if not os.path.exists(dataset_path) or not os.path.exists(os.path.join(dataset_path, filename)):
+        sample_path = os.path.join(BASE_DIR, 'dataset_sample')
+        if os.path.exists(sample_path):
+            dataset_path = sample_path
+    return send_from_directory(dataset_path, filename)
 
 @app.route('/train', methods=['GET', 'POST'])
 def train_models():
