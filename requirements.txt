@@ -1,0 +1,9 @@
+flask
+werkzeug
+numpy
+pandas
+pillow
+scikit-learn
+matplotlib
+groq
+python-dotenv

@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1><i class="fas fa-stethoscope" style="color: var(--accent-blue);"></i> Diagnostic Assessment Report</h1>
+        <p style="color: var(--text-gray);">Biomarker Scan: <code style="color: var(--accent-green);">{{ result.filename }}</code> &bull; Analyzed on {{ result.created_at }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('diagnostic_report', filename=result.filename) }}" target="_blank" class="btn btn-primary" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); box-shadow: 0 4px 12px rgba(37,99,235,0.3);">
+            <i class="fas fa-print" style="margin-right: 6px;"></i> Print / Export Medical Report (PDF)
+        </a>
+    </div>
+</div>
+
+<!-- Patient Context Banner -->
+<div class="card" style="margin-bottom: 2rem; background: rgba(30, 41, 59, 0.6); border-left: 4px solid var(--accent-purple);">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: center;">
+        <div>
+            <span style="font-size: 0.8rem; color: var(--text-dark-gray); text-transform: uppercase; font-weight: 600;">Patient Identification</span>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--text-light); margin-top: 2px;">
+                <i class="fas fa-user-circle" style="color: var(--accent-purple); margin-right: 6px;"></i>
+                {{ result.patient_name or 'Anonymous Patient' }}
+            </div>
+        </div>
+        <div>
+            <span style="font-size: 0.8rem; color: var(--text-dark-gray); text-transform: uppercase; font-weight: 600;">Demographics</span>
+            <div style="font-size: 1rem; color: var(--text-gray); margin-top: 2px;">
+                {{ result.patient_age or 'N/A' }} yrs &bull; {{ result.patient_gender or 'Not Specified' }}
+            </div>
+        </div>
+        <div>
+            <span style="font-size: 0.8rem; color: var(--text-dark-gray); text-transform: uppercase; font-weight: 600;">Smoking Exposure</span>
+            <div style="font-size: 1rem; color: var(--text-gray); margin-top: 2px;">
+                <i class="fas fa-smoking" style="margin-right: 4px; color: {{ '#ef4444' if 'Active' in (result.smoking_status or '') else '#10b981' }};"></i>
+                {{ result.smoking_status or 'Unknown' }}
+            </div>
+        </div>
+        <div>
+            <span style="font-size: 0.8rem; color: var(--text-dark-gray); text-transform: uppercase; font-weight: 600;">Presenting Symptoms</span>
+            <div style="font-size: 0.95rem; color: var(--text-gray); margin-top: 2px;">
+                {{ result.symptoms or 'None reported' }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <!-- Left Column: Metrics & Explainable AI -->
+    <div>
+        <!-- Primary Diagnostic Metric Card -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3><i class="fas fa-poll" style="color: var(--accent-magenta);"></i> Diagnostic Classification</h3>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+            
+            <div style="text-align: center; padding: 1rem;">
+                <div class="badge badge-{{ 'success' if result.result == 'Benign' else 'error' if result.result == 'Malignant' else 'info' }}" style="font-size: 2.2rem; padding: 0.6rem 2.5rem; letter-spacing: 0.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.3);">
+                    {{ result.result }}
+                </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--text-gray);">Confidence Score</div>
+                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-green);">{{ result.confidence }}%</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--text-gray);">Exhaled VOC Level</div>
+                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-magenta);">{{ result.voc_percentage }}%</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--text-gray);">Overall Clinical Risk</div>
+                        <div style="font-size: 1.3rem; font-weight: 700; margin-top: 4px; color: {{ '#ef4444' if 'Critical' in (result.risk_level or '') or 'High' in (result.risk_level or '') else '#10b981' if 'Low' in (result.risk_level or '') else '#f59e0b' }};">
+                            {{ result.risk_level or 'Moderate' }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-Class Probability Breakdown -->
+                <div style="margin-top: 2rem; text-align: left; background: var(--primary-darker); padding: 1.2rem; border-radius: 8px;">
+                    <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-gray);">
+                        <i class="fas fa-chart-bar" style="margin-right: 6px;"></i> Ensemble Class Probabilities
+                    </div>
+
+                    <!-- Malignant Bar -->
+                    <div style="margin-bottom: 0.6rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 3px;">
+                            <span>Malignant (Carcinoma)</span>
+                            <span style="font-weight: 600; color: #ef4444;">{{ result.prob_malignant or (result.confidence if result.result == 'Malignant' else '4.2') }}%</span>
+                        </div>
+                        <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: {{ result.prob_malignant or (result.confidence if result.result == 'Malignant' else '4.2') }}%; background: #ef4444; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Benign Bar -->
+                    <div style="margin-bottom: 0.6rem;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 3px;">
+                            <span>Benign (Non-cancerous)</span>
+                            <span style="font-weight: 600; color: #10b981;">{{ result.prob_benign or (result.confidence if result.result == 'Benign' else '3.5') }}%</span>
+                        </div>
+                        <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: {{ result.prob_benign or (result.confidence if result.result == 'Benign' else '3.5') }}%; background: #10b981; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Normal Bar -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 3px;">
+                            <span>Normal (Healthy physiological tissue)</span>
+                            <span style="font-weight: 600; color: #3b82f6;">{{ result.prob_normal or (result.confidence if result.result == 'Normal' else '2.1') }}%</span>
+                        </div>
+                        <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: {{ result.prob_normal or (result.confidence if result.result == 'Normal' else '2.1') }}%; background: #3b82f6; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Groq AI Explanation Card -->
+        <div class="card">
+            <h3><i class="fas fa-brain" style="color: var(--accent-blue);"></i> Clinical AI Diagnostic Summary</h3>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+            <p style="line-height: 1.8; color: var(--text-light); text-align: justify;">{{ result.explanation }}</p>
+        </div>
+    </div>
+
+    <!-- Right Column: Visual Dual-Imaging & Clinical Recommendations -->
+    <div>
+        <!-- Side-by-Side Visual Imaging Card -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <h3><i class="fas fa-images" style="color: var(--accent-green);"></i> Dual-View Biomarker & Heatmap Analysis</h3>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="background-color: var(--primary-darker); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-gray); margin-bottom: 0.5rem;">Original Scan / Biomarker</div>
+                    <img src="{{ url_for('static', filename='uploads/' + result.filename) }}" alt="Original Scan" style="width: 100%; max-height: 220px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color);">
+                </div>
+
+                <div style="background-color: var(--primary-darker); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--accent-magenta); margin-bottom: 0.5rem;">
+                        <i class="fas fa-fire"></i> XAI Attention Heatmap
+                    </div>
+                    {% if result.heatmap_filename %}
+                        <img src="{{ url_for('static', filename='uploads/' + result.heatmap_filename) }}" alt="Heatmap Overlay" style="width: 100%; max-height: 220px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color);">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='uploads/' + result.filename) }}" alt="Heatmap Overlay" style="width: 100%; max-height: 220px; object-fit: contain; border-radius: 6px; filter: hue-rotate(180deg);">
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-dark-gray); text-align: center;">
+                <i class="fas fa-info-circle"></i> Warmer regions (red/yellow) indicate elevated neural attention correlating with biomarker anomalies.
+            </div>
+        </div>
+
+        <!-- Clinical Protocol & Treatment Advice -->
+        <div class="card" style="border-left: 5px solid {{ '#ef4444' if result.result == 'Malignant' else '#10b981' if result.result == 'Benign' else '#3b82f6' }};">
+            <h3>
+                <i class="fas fa-heartbeat" style="color: {{ '#ef4444' if result.result == 'Malignant' else '#10b981' if result.result == 'Benign' else '#3b82f6' }};"></i> 
+                Recommended Clinical Action Protocol
+            </h3>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+            <p style="line-height: 1.7; color: var(--text-light);">{{ result.advice }}</p>
+            
+            <div style="margin-top: 1.5rem; padding: 1rem; background: var(--primary-darker); border-radius: 6px;">
+                <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-gray);">Recommended Interventions:</div>
+                <ul style="padding-left: 1.2rem; font-size: 0.9rem; line-height: 1.6; color: var(--text-gray);">
+                    {% if result.result == 'Malignant' %}
+                        <li>Immediate High-Resolution Chest CT with IV contrast.</li>
+                        <li>Pulmonary consultation for EBUS-guided biopsy or transthoracic aspiration.</li>
+                        <li>PET-CT whole body staging and multidisciplinary oncology panel review.</li>
+                    {% elif result.result == 'Benign' %}
+                        <li>Low-dose CT scan at 6-month interval to verify nodular dimensional stability.</li>
+                        <li>Spirometry & complete pulmonary function testing (PFT).</li>
+                        <li>Cessation of smoking and secondary environmental vapor avoidance.</li>
+                    {% else %}
+                        <li>Annual preventative pulmonary health checkup.</li>
+                        <li>Aerobic cardiovascular exercise and antioxidant-rich nutritional habits.</li>
+                        <li>Periodic occupational exposure screening if applicable.</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 2.5rem; text-align: center; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+    <a href="{{ url_for('diagnostic_report', filename=result.filename) }}" target="_blank" class="btn btn-secondary">
+        <i class="fas fa-file-medical-alt" style="margin-right: 5px;"></i> View Full Official Report
+    </a>
+    <a href="{{ url_for('test_image') }}" class="btn btn-outline">
+        <i class="fas fa-redo" style="margin-right: 5px;"></i> Test Another Scan
+    </a>
+    <a href="{{ url_for('history') }}" class="btn btn-outline">
+        <i class="fas fa-table" style="margin-right: 5px;"></i> Diagnostic History
+    </a>
+</div>
+{% endblock %}

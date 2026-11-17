@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1><i class="fas fa-history" style="color: var(--accent-blue);"></i> Diagnostic Records & History</h1>
+        <p style="color: var(--text-gray);">Review, filter, and export historical clinical predictions and patient scans.</p>
+    </div>
+    <div>
+        <a href="{{ url_for('export_history') }}" class="btn btn-outline" style="border-color: var(--accent-green); color: var(--accent-green);">
+            <i class="fas fa-file-csv" style="margin-right: 6px;"></i> Export to CSV
+        </a>
+    </div>
+</div>
+
+<!-- Search and Filter Controls -->
+<div class="card" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem;">
+    <form method="GET" action="{{ url_for('history') }}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+            <input type="text" name="q" value="{{ search_query or '' }}" placeholder="Search by patient name or scan filename..." style="width: 100%; padding: 0.6rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-darker); color: var(--text-light);">
+        </div>
+        <div>
+            <select name="status" style="padding: 0.6rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-darker); color: var(--text-light);">
+                <option value="" {{ 'selected' if not current_status }}>All Diagnoses</option>
+                <option value="Malignant" {{ 'selected' if current_status == 'Malignant' }}>Malignant</option>
+                <option value="Benign" {{ 'selected' if current_status == 'Benign' }}>Benign</option>
+                <option value="Normal" {{ 'selected' if current_status == 'Normal' }}>Normal</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.25rem;">
+                <i class="fas fa-search"></i> Filter
+            </button>
+            {% if search_query or current_status %}
+                <a href="{{ url_for('history') }}" class="btn btn-outline" style="padding: 0.6rem 1rem; margin-left: 0.5rem;">Reset</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align: left; color: var(--text-dark-gray);">
+                <th style="padding: 1rem;">Date & Time</th>
+                <th style="padding: 1rem;">Patient Name</th>
+                <th style="padding: 1rem;">Scan File</th>
+                <th style="padding: 1rem;">Diagnosis</th>
+                <th style="padding: 1rem;">Confidence</th>
+                <th style="padding: 1rem;">Risk Assessment</th>
+                <th style="padding: 1rem; text-align: right;">Clinical Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pred in predictions %}
+            <tr style="border-top: 1px solid var(--border-color);">
+                <td style="padding: 1rem; font-size: 0.9rem; color: var(--text-gray);">{{ pred.created_at }}</td>
+                <td style="padding: 1rem; font-weight: 600;">
+                    <i class="fas fa-user-circle" style="color: var(--accent-purple); margin-right: 4px;"></i>
+                    {{ pred.patient_name or 'Anonymous' }}
+                </td>
+                <td style="padding: 1rem; font-size: 0.9rem; color: var(--text-gray);">
+                    <code>{{ pred.filename }}</code>
+                </td>
+                <td style="padding: 1rem;">
+                    <span class="badge badge-{{ 'success' if pred.result == 'Benign' else 'error' if pred.result == 'Malignant' else 'info' }}">
+                        {{ pred.result }}
+                    </span>
+                </td>
+                <td style="padding: 1rem; font-weight: 600; color: var(--accent-green);">{{ pred.confidence }}%</td>
+                <td style="padding: 1rem;">
+                    <span style="font-size: 0.85rem; font-weight: 600; color: {{ '#ef4444' if 'Critical' in (pred.risk_level or '') or 'High' in (pred.risk_level or '') else '#10b981' if 'Low' in (pred.risk_level or '') else '#f59e0b' }};">
+                        {{ pred.risk_level or 'Moderate' }}
+                    </span>
+                </td>
+                <td style="padding: 1rem; text-align: right; white-space: nowrap;">
+                    <a href="{{ url_for('prediction_result', filename=pred.filename) }}" class="btn btn-sm btn-outline" title="View Full Result">
+                        <i class="fas fa-eye"></i> Details
+                    </a>
+                    <a href="{{ url_for('diagnostic_report', filename=pred.filename) }}" target="_blank" class="btn btn-sm btn-secondary" style="margin-left: 0.5rem;" title="Print Report">
+                        <i class="fas fa-print"></i> Report
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="padding: 2.5rem; text-align: center; color: var(--text-dark-gray);">
+                    <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                    No matching diagnostic records found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

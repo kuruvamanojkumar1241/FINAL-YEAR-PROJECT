@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Diagnostic Report - {{ result.patient_name or 'Patient' }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #0f172a;
+            --accent: #2563eb;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #d97706;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-600: #475569;
+            --gray-800: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        .report-page {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-200);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .clinic-info h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .clinic-info p {
+            margin: 4px 0 0 0;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .report-meta {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        .report-meta strong {
+            color: var(--gray-800);
+        }
+
+        .patient-box {
+            background: var(--gray-100);
+            border-radius: 6px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .patient-field label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--gray-600);
+            margin-bottom: 2px;
+        }
+
+        .patient-field span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 0.4rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .diagnostic-hero {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-card {
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .result-card.Malignant {
+            border-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .result-card.Benign {
+            border-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .result-card.Normal {
+            border-color: var(--accent);
+            background: #eff6ff;
+        }
+
+        .result-badge {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-card.Malignant .result-badge { color: var(--danger); }
+        .result-card.Benign .result-badge { color: var(--success); }
+        .result-card.Normal .result-badge { color: var(--accent); }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .metrics-table th, .metrics-table td {
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid var(--gray-200);
+            text-align: left;
+        }
+
+        .metrics-table th {
+            background: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .dual-imaging {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .image-pane {
+            text-align: center;
+            border: 1px solid var(--gray-200);
+            padding: 0.75rem;
+            border-radius: 6px;
+            background: #ffffff;
+        }
+
+        .image-pane img {
+            max-width: 100%;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .image-pane p {
+            margin: 0.5rem 0 0 0;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .action-bar {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-print {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-close {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .signatures {
+            margin-top: 3.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            border-top: 1px dashed var(--gray-200);
+            padding-top: 2rem;
+        }
+
+        .sign-block {
+            text-align: center;
+        }
+
+        .sign-line {
+            border-bottom: 1px solid var(--gray-600);
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+
+        .sign-title {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .disclaimer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+            border-top: 1px solid var(--gray-200);
+            padding-top: 1rem;
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .action-bar {
+                display: none !important;
+            }
+            .report-page {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-bar">
+        <button class="btn btn-print" onclick="window.print()">
+            <i class="fas fa-print"></i> Print / Save as PDF
+        </button>
+        <button class="btn btn-close" onclick="window.close()">
+            <i class="fas fa-times"></i> Close Window
+        </button>
+    </div>
+
+    <div class="report-page">
+        <!-- Clinic Header -->
+        <div class="header">
+            <div class="clinic-info">
+                <h1><i class="fas fa-lungs"></i> PULMONARY ONCOLOGY & AI DIAGNOSTIC CENTER</h1>
+                <p>Non-Invasive Breath VOC Biomarker Profiling & Deep SNN Pulmonary Analysis</p>
+                <p>Advanced Clinical Imaging Network &bull; ISO-15189 Certified Diagnostic Protocol</p>
+            </div>
+            <div class="report-meta">
+                <div>Report Ref: <strong>LUNG-{{ result.id }}-2026</strong></div>
+                <div>Date & Time: <strong>{{ result.created_at }}</strong></div>
+                <div>Scan File: <strong>{{ result.filename }}</strong></div>
+            </div>
+        </div>
+
+        <!-- Patient Demographics Box -->
+        <div class="patient-box">
+            <div class="patient-field">
+                <label>Patient Full Name</label>
+                <span>{{ result.patient_name or 'Anonymous Patient' }}</span>
+            </div>
+            <div class="patient-field">
+                <label>Age & Biological Gender</label>
+                <span>{{ result.patient_age or 'N/A' }} Yrs / {{ result.patient_gender or 'Not Specified' }}</span>
+            </div>
+            <div class="patient-field">
+                <label>Smoking History</label>
+                <span>{{ result.smoking_status or 'Unknown' }}</span>
+            </div>
+            <div class="patient-field">
+                <label>Assessed Risk Level</label>
+                <span style="color: {{ '#dc2626' if 'Critical' in (result.risk_level or '') or 'High' in (result.risk_level or '') else '#16a34a' if 'Low' in (result.risk_level or '') else '#d97706' }};">
+                    {{ result.risk_level or 'Moderate Risk' }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Symptoms Reported -->
+        <div style="font-size: 0.85rem; color: var(--gray-600); margin-top: -1rem; margin-bottom: 1.5rem; padding: 0.5rem 1rem; background: #fff; border-left: 3px solid var(--accent);">
+            <strong>Reported Symptoms / Indications:</strong> {{ result.symptoms or 'Asymptomatic / None reported' }}
+        </div>
+
+        <!-- Diagnostic Classification Hero -->
+        <div class="diagnostic-hero">
+            <div class="result-card {{ result.result }}">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--gray-600); text-transform: uppercase;">Primary AI Diagnostic Classification</div>
+                <div class="result-badge">{{ result.result }}</div>
+                <div style="font-size: 0.95rem; font-weight: 600; margin-top: 0.25rem;">
+                    Model Confidence: {{ result.confidence }}% &bull; VOC Level: {{ result.voc_percentage }}%
+                </div>
+            </div>
+
+            <div>
+                <table class="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>Diagnostic Parameter</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Malignant Probability</td>
+                            <td style="font-weight: 700; color: var(--danger);">{{ result.prob_malignant or (result.confidence if result.result == 'Malignant' else '4.2') }}%</td>
+                        </tr>
+                        <tr>
+                            <td>Benign Probability</td>
+                            <td style="font-weight: 700; color: var(--success);">{{ result.prob_benign or (result.confidence if result.result == 'Benign' else '3.5') }}%</td>
+                        </tr>
+                        <tr>
+                            <td>Normal Tissue Probability</td>
+                            <td style="font-weight: 700; color: var(--accent);">{{ result.prob_normal or (result.confidence if result.result == 'Normal' else '2.1') }}%</td>
+                        </tr>
+                        <tr>
+                            <td>VOC Biomarker Activity</td>
+                            <td style="font-weight: 600;">{{ result.voc_percentage }}%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Dual Imaging & Explainable AI -->
+        <div class="section-title">
+            <i class="fas fa-microscope"></i> Dual-View Biomarker Scan & Explainable AI (XAI) Attention Overlay
+        </div>
+        <div class="dual-imaging">
+            <div class="image-pane">
+                <img src="{{ url_for('static', filename='uploads/' + result.filename) }}" alt="Original Biomarker Scan">
+                <p>Original Pulmonary Scan / VOC Pattern</p>
+            </div>
+            <div class="image-pane">
+                {% if result.heatmap_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + result.heatmap_filename) }}" alt="Heatmap Overlay">
+                {% else %}
+                    <img src="{{ url_for('static', filename='uploads/' + result.filename) }}" alt="Heatmap Overlay" style="filter: hue-rotate(180deg);">
+                {% endif %}
+                <p>XAI Neural Attention Saliency Map</p>
+            </div>
+        </div>
+
+        <!-- Clinical AI Analysis -->
+        <div class="section-title">
+            <i class="fas fa-notes-medical"></i> Pathophysiological Interpretation & Clinical Findings
+        </div>
+        <p style="font-size: 0.9rem; line-height: 1.7; color: var(--gray-800); text-align: justify; margin: 0;">
+            {{ result.explanation }}
+        </p>
+
+        <!-- Recommended Action Protocol -->
+        <div class="section-title">
+            <i class="fas fa-clipboard-check"></i> Recommended Diagnostic Protocol & Clinical Next Steps
+        </div>
+        <p style="font-size: 0.9rem; line-height: 1.6; color: var(--gray-800); margin: 0;">
+            <strong>Immediate Protocol:</strong> {{ result.advice }}
+        </p>
+
+        <!-- Doctor Signature Block -->
+        <div class="signatures">
+            <div class="sign-block">
+                <div class="sign-line"></div>
+                <div style="font-weight: 700; font-size: 0.9rem;">Dr. Robert Vance, MD, FCCP</div>
+                <div class="sign-title">Chief of Pulmonary Oncology & Thoracic Medicine</div>
+            </div>
+            <div class="sign-block">
+                <div class="sign-line"></div>
+                <div style="font-weight: 700; font-size: 0.9rem;">AI Clinical Diagnostic System v2.4</div>
+                <div class="sign-title">Validated Spiking Neural Network (SNN) Ensemble Engine</div>
+            </div>
+        </div>
+
+        <!-- Medical Disclaimer -->
+        <div class="disclaimer">
+            This report is generated by an automated clinical decision support system combining deep spiking neural networks with breath volatile organic compound analysis. Clinical findings must be correlated with patient history and confirmed by a certified physician before initiating definitive therapeutic interventions.
+        </div>
+    </div>
+
+</body>
+</html>

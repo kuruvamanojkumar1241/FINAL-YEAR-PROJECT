@@ -1,0 +1,7 @@
+dataset/
+Testcases/
+savemodels/
+database/lung_ai.db
+.git/
+__pycache__/
+*.pyc

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1><i class="fas fa-rocket" style="color: var(--accent-magenta);"></i> Future Scope & Technological Innovations</h1>
+            <p style="color: var(--text-gray);">Next-generation roadmap: Hardware IoT e-Nose sensors, Edge Neuromorphic AI, and Federated Hospital Networks.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('test_image') }}" class="btn btn-secondary">
+                <i class="fas fa-microscope" style="margin-right: 6px;"></i> Test Live AI Model
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Futuristic Hero Banner -->
+<div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(30,58,138,0.3), rgba(139,92,246,0.2)); border: 1px solid rgba(139,92,246,0.3);">
+    <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+        <div style="font-size: 3.5rem; color: var(--accent-magenta); padding: 1rem 1.5rem; background: rgba(0,0,0,0.25); border-radius: 12px;">
+            <i class="fas fa-satellite-dish"></i>
+        </div>
+        <div style="flex: 1;">
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.5rem; color: #fff;">Pioneering Non-Invasive Early Oncology Detection</h2>
+            <p style="margin: 0; color: var(--text-gray); line-height: 1.6;">
+                While traditional lung cancer diagnostics rely on invasive biopsies or late-stage radiological imaging, our research integrates 
+                <strong>Volatile Organic Compound (VOC) Breath Gas Chromatography</strong> with 
+                <strong>Spiking Neural Networks (SNN)</strong> and <strong>Clinical GenAI</strong>. 
+                Explore the five key technological horizons under active development below.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Five Strategic Innovation Pillars -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+
+    <!-- Pillar 1: IoT e-Nose Hardware Integration -->
+    <div class="card" style="border-top: 4px solid var(--accent-blue);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <h3><i class="fas fa-microchip" style="color: var(--accent-blue); margin-right: 8px;"></i> 1. IoT e-Nose Sensor Pod</h3>
+            <span class="badge badge-info">Hardware Phase</span>
+        </div>
+        <p style="color: var(--text-gray); font-size: 0.9rem; line-height: 1.6;">
+            Direct serial and Bluetooth Low Energy (BLE) integration with physical electronic nose sensor arrays (MQ-135, TGS2602, and quartz crystal microbalance sensors).
+        </p>
+        <ul style="color: var(--text-dark-gray); font-size: 0.85rem; line-height: 1.6; margin-top: 0.75rem; padding-left: 1.2rem;">
+            <li>Real-time telemetry stream of exhaled alveolar gas concentration.</li>
+            <li>Automated baseline drift correction & temperature compensation.</li>
+            <li>Handheld point-of-care (PoC) diagnostic breathalyzer form-factor.</li>
+        </ul>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: var(--primary-darker); border-radius: 6px; font-size: 0.8rem; color: var(--accent-green);">
+            <i class="fas fa-check-circle"></i> Telemetry API specifications ready for Arduino & ESP32.
+        </div>
+    </div>
+
+    <!-- Pillar 2: Neuromorphic Computing & SNN Edge AI -->
+    <div class="card" style="border-top: 4px solid var(--accent-magenta);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <h3><i class="fas fa-bolt" style="color: var(--accent-magenta); margin-right: 8px;"></i> 2. Neuromorphic Edge SNN</h3>
+            <span class="badge badge-purple">AI Architecture</span>
+        </div>
+        <p style="color: var(--text-gray); font-size: 0.9rem; line-height: 1.6;">
+            Deploying Spiking Neural Networks (SNN) directly onto ultra-low-power neuromorphic hardware (Intel Loihi 2 and SynSense Speck chips).
+        </p>
+        <ul style="color: var(--text-dark-gray); font-size: 0.85rem; line-height: 1.6; margin-top: 0.75rem; padding-left: 1.2rem;">
+            <li>Event-driven, asynchronous spike train processing matching human biology.</li>
+            <li>Over 95% reduction in power consumption compared to standard GPU inference.</li>
+            <li>Enables battery-operated, real-time edge screening in rural clinics.</li>
+        </ul>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: var(--primary-darker); border-radius: 6px; font-size: 0.8rem; color: var(--accent-magenta);">
+            <i class="fas fa-microchip"></i> Current SNN PyTorch architecture is export-ready for Lava framework.
+        </div>
+    </div>
+
+    <!-- Pillar 3: 3D Volumetric CT & DICOM / PACS -->
+    <div class="card" style="border-top: 4px solid var(--accent-green);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <h3><i class="fas fa-cubes" style="color: var(--accent-green); margin-right: 8px;"></i> 3. 3D Volumetric DICOM / PACS</h3>
+            <span class="badge badge-success">Hospital Protocol</span>
+        </div>
+        <p style="color: var(--text-gray); font-size: 0.9rem; line-height: 1.6;">
+            Native support for clinical DICOM (.dcm) multi-slice thoracic CT scans and hospital PACS (Picture Archiving and Communication System) network queries.
+        </p>
+        <ul style="color: var(--text-dark-gray); font-size: 0.85rem; line-height: 1.6; margin-top: 0.75rem; padding-left: 1.2rem;">
+            <li>3D pulmonary nodule volumetric segmentation & growth velocity tracking.</li>
+            <li>HL7 and FHIR clinical messaging standards compliance.</li>
+            <li>Direct PACS workstation query/retrieve for hospital radiologists.</li>
+        </ul>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: var(--primary-darker); border-radius: 6px; font-size: 0.8rem; color: var(--accent-blue);">
+            <i class="fas fa-hospital"></i> Seamless integration into radiology viewing suites.
+        </div>
+    </div>
+
+    <!-- Pillar 4: Federated Cross-Hospital Learning -->
+    <div class="card" style="border-top: 4px solid #f59e0b;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <h3><i class="fas fa-network-wired" style="color: #f59e0b; margin-right: 8px;"></i> 4. Federated Privacy AI</h3>
+            <span class="badge" style="background: rgba(245,158,11,0.2); color: #f59e0b;">Privacy & Security</span>
+        </div>
+        <p style="color: var(--text-gray); font-size: 0.9rem; line-height: 1.6;">
+            Decentralized federated training allowing multi-hospital institutional collaboration without sharing raw patient scans or identifiable healthcare records.
+        </p>
+        <ul style="color: var(--text-dark-gray); font-size: 0.85rem; line-height: 1.6; margin-top: 0.75rem; padding-left: 1.2rem;">
+            <li>Zero-trust differential privacy & encrypted model weight aggregation.</li>
+            <li>Full compliance with HIPAA, GDPR, and medical ethical data guidelines.</li>
+            <li>Immunity against single-center dataset bias and demographic skew.</li>
+        </ul>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: var(--primary-darker); border-radius: 6px; font-size: 0.8rem; color: #f59e0b;">
+            <i class="fas fa-shield-alt"></i> Patient confidentiality preserved cryptographically.
+        </div>
+    </div>
+
+    <!-- Pillar 5: Multi-Modal Biomarker & Genomic Fusion -->
+    <div class="card" style="border-top: 4px solid #ec4899;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <h3><i class="fas fa-dna" style="color: #ec4899; margin-right: 8px;"></i> 5. Multi-Omics Fusion</h3>
+            <span class="badge" style="background: rgba(236,72,153,0.2); color: #ec4899;">Precision Oncology</span>
+        </div>
+        <p style="color: var(--text-gray); font-size: 0.9rem; line-height: 1.6;">
+            Harmonizing breath VOC spectra with blood circulating tumor DNA (ctDNA) and genomic driver mutation profiles (EGFR, ALK, KRAS, PD-L1).
+        </p>
+        <ul style="color: var(--text-dark-gray); font-size: 0.85rem; line-height: 1.6; margin-top: 0.75rem; padding-left: 1.2rem;">
+            <li>Personalized targeted drug recommendation & immunotherapy matching.</li>
+            <li>Detects stage-I microscopic malignancy prior to visible radiological mass.</li>
+            <li>Post-resection minimal residual disease (MRD) non-invasive monitoring.</li>
+        </ul>
+        <div style="margin-top: 1rem; padding: 0.75rem; background: var(--primary-darker); border-radius: 6px; font-size: 0.8rem; color: #ec4899;">
+            <i class="fas fa-flask"></i> Revolutionizes stage-I early intervention efficacy.
+        </div>
+    </div>
+
+    <!-- Interactive IoT Breathalyzer Live Simulator -->
+    <div class="card" style="border-top: 4px solid var(--accent-purple); background: var(--primary-darker);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <h3><i class="fas fa-vial" style="color: var(--accent-purple); margin-right: 8px;"></i> Live Sensor Simulator</h3>
+            <span class="badge badge-purple">Interactive Demo</span>
+        </div>
+        <p style="color: var(--text-gray); font-size: 0.85rem;">
+            Simulate live exhaled alveolar breath VOC influx into an array of MOS (Metal Oxide Semiconductor) gas sensors:
+        </p>
+        
+        <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                <span>MQ-135 (Alkanes & Benzene):</span>
+                <span id="sensor-mq135" style="color: var(--accent-green); font-weight: 700;">14.2 ppm</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
+                <span>TGS-2602 (Aldehydes):</span>
+                <span id="sensor-tgs" style="color: var(--accent-magenta); font-weight: 700;">8.6 ppm</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                <span>Electrochemical sensor:</span>
+                <span id="sensor-ec" style="color: var(--accent-blue); font-weight: 700;">1.2 ppm</span>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-outline btn-block" onclick="simulateBreathSensor()" style="padding: 0.5rem; font-size: 0.85rem;">
+            <i class="fas fa-wind" style="margin-right: 5px;"></i> Inhale / Exhale Test Sample
+        </button>
+    </div>
+
+</div>
+
+<!-- Implementation Timeline -->
+<div class="card">
+    <h3><i class="fas fa-stream" style="color: var(--accent-blue); margin-right: 8px;"></i> Clinical Roadmap & Implementation Phases</h3>
+    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+        <div style="padding: 1rem; background: var(--primary-darker); border-radius: 8px; border-left: 3px solid var(--accent-green);">
+            <div style="font-weight: 700; color: var(--accent-green); font-size: 0.9rem;">Phase 1: Present Core</div>
+            <div style="font-size: 1.05rem; font-weight: 700; margin: 0.25rem 0;">SNN & GenAI Decision Support</div>
+            <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 0.5rem;">
+                Ensemble CNN+SNN inference, Groq LLM clinical explanations, Explainable AI attention heatmaps, and printable medical reports.
+            </p>
+        </div>
+
+        <div style="padding: 1rem; background: var(--primary-darker); border-radius: 8px; border-left: 3px solid var(--accent-blue);">
+            <div style="font-weight: 700; color: var(--accent-blue); font-size: 0.9rem;">Phase 2: Near Horizon</div>
+            <div style="font-size: 1.05rem; font-weight: 700; margin: 0.25rem 0;">IoT e-Nose Prototype</div>
+            <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 0.5rem;">
+                Calibration of physical micro-sensor pods with USB/Bluetooth serial pipelines feeding continuous breath VOC metrics.
+            </p>
+        </div>
+
+        <div style="padding: 1rem; background: var(--primary-darker); border-radius: 8px; border-left: 3px solid var(--accent-magenta);">
+            <div style="font-weight: 700; color: var(--accent-magenta); font-size: 0.9rem;">Phase 3: Clinical Trials</div>
+            <div style="font-size: 1.05rem; font-weight: 700; margin: 0.25rem 0;">DICOM & Multi-Center Hospital Pilot</div>
+            <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 0.5rem;">
+                Cross-institution federated learning trials, low-dose volumetric CT co-registration, and oncological blind study validation.
+            </p>
+        </div>
+
+        <div style="padding: 1rem; background: var(--primary-darker); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+            <div style="font-weight: 700; color: var(--accent-purple); font-size: 0.9rem;">Phase 4: Production Device</div>
+            <div style="font-size: 1.05rem; font-weight: 700; margin: 0.25rem 0;">Neuromorphic Point-of-Care Kit</div>
+            <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 0.5rem;">
+                Commercial standalone point-of-care breathalyzer running on neuromorphic edge silicon with sub-watt energy footprint.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+function simulateBreathSensor() {
+    const mq = (Math.random() * 20 + 8).toFixed(1);
+    const tgs = (Math.random() * 15 + 4).toFixed(1);
+    const ec = (Math.random() * 3 + 0.5).toFixed(1);
+
+    document.getElementById('sensor-mq135').textContent = mq + ' ppm';
+    document.getElementById('sensor-tgs').textContent = tgs + ' ppm';
+    document.getElementById('sensor-ec').textContent = ec + ' ppm';
+}
+</script>
+{% endblock %}

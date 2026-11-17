@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1><i class="fas fa-lungs" style="color: var(--accent-blue);"></i> Non-Invasive Lung Cancer Screening</h1>
+    <p style="color: var(--text-gray);">Combine Exhaled Breath VOC Biomarker Analysis with Clinical Risk Profiling & Spiking Neural Network (SNN) Inference.</p>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px; margin: 0 auto;">
+        
+        <!-- Left Column: Scan / Biomarker Image Upload -->
+        <div class="card">
+            <h3><i class="fas fa-microscope" style="color: var(--accent-magenta);"></i> 1. Biomarker Scan Upload</h3>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+            
+            <div class="form-group">
+                <label class="form-label required">Exhaled VOC / Pulmonary Scan Image</label>
+                <div id="drop-zone" style="border: 2px dashed var(--border-color); padding: 2.5rem 1rem; text-align: center; border-radius: 8px; cursor: pointer; transition: border-color 0.3s; background: rgba(255,255,255,0.02);" onclick="document.getElementById('file-input').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--accent-blue); margin-bottom: 1rem;"></i>
+                    <p id="upload-prompt" style="font-weight: 500;">Click to browse or drag & drop scan file</p>
+                    <p style="font-size: 0.85rem; color: var(--text-dark-gray); margin-top: 0.5rem;">Supported: PNG, JPG, JPEG (Max 5MB)</p>
+                    <input type="file" id="file-input" name="file" accept="image/*" required style="display: none;" onchange="previewImage(this)">
+                </div>
+            </div>
+
+            <!-- Image Preview Box -->
+            <div id="preview-container" style="display: none; margin-top: 1rem; text-align: center; padding: 1rem; background: var(--primary-darker); border-radius: 8px; border: 1px solid var(--border-color);">
+                <img id="image-preview" src="#" alt="Selected scan preview" style="max-height: 200px; max-width: 100%; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+                <p id="preview-filename" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--accent-green); font-weight: 600;"></p>
+            </div>
+            
+            <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.08); border-radius: 6px; border-left: 3px solid var(--accent-blue);">
+                <div style="font-size: 0.85rem; color: var(--text-gray);">
+                    <i class="fas fa-info-circle" style="color: var(--accent-blue); margin-right: 5px;"></i>
+                    <strong>Explainable AI Active:</strong> The system automatically extracts feature activations and renders a Grad-CAM / Attention Saliency heatmap.
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Patient Clinical Profile & Risk Factors -->
+        <div class="card">
+            <h3><i class="fas fa-user-injured" style="color: var(--accent-purple);"></i> 2. Patient Clinical Profile</h3>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Patient Full Name / ID</label>
+                    <input type="text" name="patient_name" class="form-control" placeholder="e.g. John Doe (or PT-8821)" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-darker); color: var(--text-light);">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Age</label>
+                    <input type="number" name="patient_age" class="form-control" placeholder="e.g. 52" min="1" max="120" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-darker); color: var(--text-light);">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                <div class="form-group">
+                    <label class="form-label">Biological Gender</label>
+                    <select name="patient_gender" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-darker); color: var(--text-light);">
+                        <option value="Not Specified">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Smoking Exposure History</label>
+                    <select name="smoking_status" style="width: 100%; padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-darker); color: var(--text-light);">
+                        <option value="Non-smoker">Non-smoker</option>
+                        <option value="Former Smoker (Quit > 5 yrs)">Former Smoker</option>
+                        <option value="Active Smoker (< 1 pack/day)">Active Smoker (Moderate)</option>
+                        <option value="Heavy Smoker (> 1 pack/day)">Heavy Smoker (> 1 pack/day)</option>
+                        <option value="Passive / Secondhand Smoke">Passive / Environmental</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label class="form-label">Presenting Clinical Symptoms (Select all that apply)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                        <input type="checkbox" name="symptoms" value="Persistent Cough"> Persistent Cough
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                        <input type="checkbox" name="symptoms" value="Hemoptysis (Blood in sputum)"> Blood in Sputum
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                        <input type="checkbox" name="symptoms" value="Dyspnea (Shortness of breath)"> Dyspnea / Breathlessness
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                        <input type="checkbox" name="symptoms" value="Unexplained Weight Loss"> Weight Loss / Fatigue
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                        <input type="checkbox" name="symptoms" value="Chest Pain"> Dull / Sharp Chest Pain
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer;">
+                        <input type="checkbox" name="symptoms" value="Family History of Ca"> Family History of Cancer
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button type="submit" class="btn btn-secondary btn-block" style="padding: 0.9rem; font-size: 1.05rem; font-weight: 600;">
+                    <i class="fas fa-brain" style="margin-right: 8px;"></i> Execute AI Diagnostic Analysis
+                </button>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('image-preview').src = e.target.result;
+            document.getElementById('preview-filename').textContent = file.name;
+            document.getElementById('preview-container').style.display = 'block';
+            document.getElementById('upload-prompt').textContent = 'File selected: ' + file.name;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
+{% endblock %}
